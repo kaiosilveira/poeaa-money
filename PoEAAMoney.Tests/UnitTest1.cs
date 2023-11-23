@@ -29,6 +29,8 @@ class Money
         { Currency.USD, 100 },
         { Currency.EUR, 100 }
     };
+
+    public static Money Dollars(decimal amount) => new(amount, Currency.USD);
 }
 
 public class MoneyTests
@@ -46,5 +48,12 @@ public class MoneyTests
     {
         var money = new Money(amount: 10, currency: Currency.BRL);
         Assert.Equal(10, money.Amount);
+    }
+
+    [Fact]
+    public void TestCreatesAnUSD()
+    {
+        var money = Money.Dollars(amount: 10);
+        Assert.Equal(Currency.USD, money.Currency);
     }
 }
