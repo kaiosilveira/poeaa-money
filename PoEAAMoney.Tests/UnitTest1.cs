@@ -7,10 +7,28 @@ public enum Currency
     EUR
 }
 
-class Money(decimal amount, Currency currency)
+class Money
 {
-    public readonly decimal Amount = amount;
-    public readonly Currency Currency = currency;
+    public readonly Currency Currency;
+    private decimal amount;
+    public decimal Amount
+    {
+        get { return amount / GetCentsFactor[Currency]; }
+        set { amount = value * GetCentsFactor[Currency]; }
+    }
+
+    public Money(decimal amount, Currency currency)
+    {
+        Amount = amount;
+        Currency = currency;
+    }
+
+    public static readonly Dictionary<Currency, decimal> GetCentsFactor = new()
+    {
+        { Currency.BRL, 100 },
+        { Currency.USD, 100 },
+        { Currency.EUR, 100 }
+    };
 }
 
 public class MoneyTests
@@ -21,5 +39,12 @@ public class MoneyTests
         var money = new Money(amount: 10, currency: Currency.BRL);
         Assert.Equal(10, money.Amount);
         Assert.Equal(Currency.BRL, money.Currency);
+    }
+
+    [Fact]
+    public void TestAppliesTheCorrectCentsFactorForBRL()
+    {
+        var money = new Money(amount: 10, currency: Currency.BRL);
+        Assert.Equal(10, money.Amount);
     }
 }
