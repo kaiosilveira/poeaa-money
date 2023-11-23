@@ -33,6 +33,8 @@ class Money
     public static Money Dollars(decimal amount) => new(amount, Currency.USD);
 
     public static Money BrasilianReal(decimal amount) => new(amount, Currency.BRL);
+
+    public static Money Euros(decimal amount) => new(amount, Currency.EUR);
 }
 
 public class MoneyTests
@@ -64,5 +66,12 @@ public class MoneyTests
     {
         var money = Money.BrasilianReal(amount: 10);
         Assert.Equal(Currency.BRL, money.Currency);
+    }
+
+    [Fact]
+    public void TestCreatesEUR()
+    {
+        var money = Money.Euros(amount: 10);
+        Assert.Equal(Currency.EUR, money.Currency);
     }
 }
