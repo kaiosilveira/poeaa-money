@@ -43,6 +43,18 @@ class Money
         if (obj is not Money other) return false;
         return Amount == other.Amount && Currency == other.Currency;
     }
+
+    public static Money operator +(Money a, Money b)
+    {
+        if (a.Currency != b.Currency)
+        {
+            throw new InvalidOperationException("Cannot add Money with different currencies");
+        }
+
+        var totalAmount = a.Amount + b.Amount;
+
+        return new Money(totalAmount, a.Currency);
+    }
 }
 
 public class MoneyTests
@@ -105,5 +117,22 @@ public class MoneyTests
         var tenEuros = Money.Euros(amount: 10);
         var tenDollars = Money.Dollars(amount: 10);
         Assert.NotEqual(tenEuros, tenDollars);
+    }
+
+    [Fact]
+    public void TestAddsUp()
+    {
+        var tenEuros = Money.Euros(amount: 10);
+        var twentyEuros = Money.Euros(amount: 20);
+        var thirtyEuros = Money.Euros(amount: 30);
+        Assert.Equal(thirtyEuros, tenEuros + twentyEuros);
+    }
+
+    [Fact]
+    public void TestCannotAddDifferentCurrencies()
+    {
+        var tenEuros = Money.Euros(amount: 10);
+        var tenDollars = Money.Dollars(amount: 10);
+        Assert.Throws<InvalidOperationException>(() => tenEuros + tenDollars);
     }
 }
