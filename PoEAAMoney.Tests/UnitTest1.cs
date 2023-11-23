@@ -35,6 +35,14 @@ class Money
     public static Money BrasilianReal(decimal amount) => new(amount, Currency.BRL);
 
     public static Money Euros(decimal amount) => new(amount, Currency.EUR);
+
+    public override int GetHashCode() => HashCode.Combine(Amount, Currency);
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is not Money other) return false;
+        return Amount == other.Amount && Currency == other.Currency;
+    }
 }
 
 public class MoneyTests
@@ -73,5 +81,29 @@ public class MoneyTests
     {
         var money = Money.Euros(amount: 10);
         Assert.Equal(Currency.EUR, money.Currency);
+    }
+
+    [Fact]
+    public void TestIsEqualSameAmountSameCurrency()
+    {
+        var tenEuros1 = Money.Euros(amount: 10);
+        var tenEuros2 = Money.Euros(amount: 10);
+        Assert.Equal(tenEuros1, tenEuros2);
+    }
+
+    [Fact]
+    public void TestIsNotEqualDifferentAmountSameCurrency()
+    {
+        var tenEuros = Money.Euros(amount: 10);
+        var twentyEuros = Money.Euros(amount: 20);
+        Assert.NotEqual(tenEuros, twentyEuros);
+    }
+
+    [Fact]
+    public void TestIsNotEqualSameAmountDifferentCurrency()
+    {
+        var tenEuros = Money.Euros(amount: 10);
+        var tenDollars = Money.Dollars(amount: 10);
+        Assert.NotEqual(tenEuros, tenDollars);
     }
 }
