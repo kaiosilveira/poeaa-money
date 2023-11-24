@@ -56,6 +56,18 @@ class Money
         return new Money(a.Amount - b.Amount, a.Currency);
     }
 
+    public static bool operator >(Money a, Money b)
+    {
+        AssertSameCurrency(a, b);
+        return a.Amount > b.Amount;
+    }
+
+    public static bool operator <(Money a, Money b)
+    {
+        AssertSameCurrency(a, b);
+        return a.Amount < b.Amount;
+    }
+
     private static void AssertSameCurrency(Money a, Money b)
     {
         if (a.Currency != b.Currency)
@@ -159,5 +171,23 @@ public class MoneyTests
         var tenEuros = Money.Euros(amount: 10);
         var tenDollars = Money.Dollars(amount: 10);
         Assert.Throws<InvalidOperationException>(() => tenEuros - tenDollars);
+    }
+
+    [Fact]
+    public void TestGreaterThanComparisons()
+    {
+        var tenEuros = Money.Euros(amount: 10);
+        var elevenEuros = Money.Euros(amount: 11);
+
+        Assert.True(elevenEuros > tenEuros);
+        Assert.True(tenEuros < elevenEuros);
+    }
+
+    [Fact]
+    public void TestCannotCompareDifferentCurrencies()
+    {
+        var tenEuros = Money.Euros(amount: 10);
+        var tenDollars = Money.Dollars(amount: 10);
+        Assert.Throws<InvalidOperationException>(() => tenEuros > tenDollars);
     }
 }
