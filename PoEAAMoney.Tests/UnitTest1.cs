@@ -68,6 +68,11 @@ class Money
         return a.Amount < b.Amount;
     }
 
+    public static Money operator *(Money a, decimal factor)
+    {
+        return new Money(a.Amount * factor, a.Currency);
+    }
+
     private static void AssertSameCurrency(Money a, Money b)
     {
         if (a.Currency != b.Currency)
@@ -189,5 +194,13 @@ public class MoneyTests
         var tenEuros = Money.Euros(amount: 10);
         var tenDollars = Money.Dollars(amount: 10);
         Assert.Throws<InvalidOperationException>(() => tenEuros > tenDollars);
+    }
+
+    [Fact]
+    public void TestMultiplication()
+    {
+        var tenEuros = Money.Euros(amount: 10);
+        var twentyEuros = Money.Euros(amount: 20);
+        Assert.Equal(twentyEuros, tenEuros * 2);
     }
 }
