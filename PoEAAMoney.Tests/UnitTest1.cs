@@ -73,6 +73,26 @@ class Money
         return new Money(a.Amount * factor, a.Currency);
     }
 
+    public Money[] Allocate(params int[] ratios)
+    {
+        var total = ratios.Sum();
+        var remainder = Amount;
+
+        var results = new Money[ratios.Length];
+        for (var i = 0; i < ratios.Length; i++)
+        {
+            var share = Amount * ratios[i] / total;
+            results[i] = new Money(share, Currency);
+            remainder -= share;
+        }
+
+        for (var i = 0; i < remainder; i++)
+        {
+            results[i].Amount += 1 / GetCentsFactor[Currency];
+        }
+        return results;
+    }
+
     private static void AssertSameCurrency(Money a, Money b)
     {
         if (a.Currency != b.Currency)
@@ -210,5 +230,15 @@ public class MoneyTests
         var oneEuro = Money.Euros(amount: 1);
         Assert.Equal(Money.Euros(amount: 2.76m), oneEuro * 2.756m);
         Assert.Equal(Money.Euros(amount: 2.75m), oneEuro * 2.754m);
+    }
+
+    [Fact]
+    public void TestAllocation()
+    {
+        var tenEuros = Money.Euros(amount: 10);
+        var allocated = tenEuros.Allocate(ratios: [1, 1, 1]);
+        Assert.Equal(Money.Euros(amount: 3.34m), allocated[0]);
+        Assert.Equal(Money.Euros(amount: 3.33m), allocated[1]);
+        Assert.Equal(Money.Euros(amount: 3.33m), allocated[2]);
     }
 }
