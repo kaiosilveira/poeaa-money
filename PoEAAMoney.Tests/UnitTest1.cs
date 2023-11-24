@@ -55,6 +55,18 @@ class Money
 
         return new Money(totalAmount, a.Currency);
     }
+
+    public static Money operator -(Money a, Money b)
+    {
+        if (a.Currency != b.Currency)
+        {
+            throw new InvalidOperationException("Cannot add Money with different currencies");
+        }
+
+        var totalAmount = a.Amount - b.Amount;
+
+        return new Money(totalAmount, a.Currency);
+    }
 }
 
 public class MoneyTests
@@ -134,5 +146,22 @@ public class MoneyTests
         var tenEuros = Money.Euros(amount: 10);
         var tenDollars = Money.Dollars(amount: 10);
         Assert.Throws<InvalidOperationException>(() => tenEuros + tenDollars);
+    }
+
+    [Fact]
+    public void TestSubtracts()
+    {
+        var thirtyEuros = Money.Euros(amount: 30);
+        var tenEuros = Money.Euros(amount: 10);
+        var twentyEuros = Money.Euros(amount: 20);
+        Assert.Equal(twentyEuros, thirtyEuros - tenEuros);
+    }
+
+    [Fact]
+    public void TestCannotSubtractDifferentCurrencies()
+    {
+        var tenEuros = Money.Euros(amount: 10);
+        var tenDollars = Money.Dollars(amount: 10);
+        Assert.Throws<InvalidOperationException>(() => tenEuros - tenDollars);
     }
 }
