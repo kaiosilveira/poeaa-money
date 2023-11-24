@@ -14,7 +14,7 @@ class Money
     public decimal Amount
     {
         get { return amount / GetCentsFactor[Currency]; }
-        set { amount = value * GetCentsFactor[Currency]; }
+        set { amount = Math.Round(value * GetCentsFactor[Currency], MidpointRounding.ToEven); }
     }
 
     public Money(decimal amount, Currency currency)
@@ -202,5 +202,13 @@ public class MoneyTests
         var tenEuros = Money.Euros(amount: 10);
         var twentyEuros = Money.Euros(amount: 20);
         Assert.Equal(twentyEuros, tenEuros * 2);
+    }
+
+    [Fact]
+    public void TestRoundsToHalfEvenWhenMultiplying()
+    {
+        var oneEuro = Money.Euros(amount: 1);
+        Assert.Equal(Money.Euros(amount: 2.76m), oneEuro * 2.756m);
+        Assert.Equal(Money.Euros(amount: 2.75m), oneEuro * 2.754m);
     }
 }
