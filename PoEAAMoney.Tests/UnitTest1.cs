@@ -10,17 +10,19 @@ public enum Currency
 class Money
 {
     public readonly Currency Currency;
+    private readonly MidpointRounding RoundingMode;
     private decimal amount;
     public decimal Amount
     {
-        get { return amount / GetCentsFactor[Currency]; }
-        set { amount = Math.Round(value * GetCentsFactor[Currency], MidpointRounding.ToEven); }
+        get { return Round(amount / GetCentsFactor[Currency]); }
+        set { amount = Round(value * GetCentsFactor[Currency]); }
     }
 
-    public Money(decimal amount, Currency currency)
+    public Money(decimal amount, Currency currency, MidpointRounding roundingMode = MidpointRounding.ToEven)
     {
         Amount = amount;
         Currency = currency;
+        RoundingMode = roundingMode;
     }
 
     public static readonly Dictionary<Currency, decimal> GetCentsFactor = new()
@@ -76,21 +78,22 @@ class Money
     public Money[] Allocate(params int[] ratios)
     {
         var total = ratios.Sum();
-        var remainder = Amount;
+        var remainder = amount;
 
-        var results = new Money[ratios.Length];
+        var results = new decimal[ratios.Length];
         for (var i = 0; i < ratios.Length; i++)
         {
-            var share = Amount * ratios[i] / total;
-            results[i] = new Money(share, Currency);
+            var share = amount * ratios[i] / total;
+            results[i] = share;
             remainder -= share;
         }
 
         for (var i = 0; i < remainder; i++)
         {
-            results[i].Amount += 1 / GetCentsFactor[Currency];
+            results[i] += 1;
         }
-        return results;
+
+        return results.Select(r => new Money(r / GetCentsFactor[Currency], Currency)).ToArray();
     }
 
     private static void AssertSameCurrency(Money a, Money b)
@@ -99,6 +102,11 @@ class Money
         {
             throw new InvalidOperationException("Cannot add Money with different currencies");
         }
+    }
+
+    private decimal Round(decimal amount)
+    {
+        return Math.Round(amount, RoundingMode);
     }
 }
 
@@ -240,5 +248,14 @@ public class MoneyTests
         Assert.Equal(Money.Euros(amount: 3.34m), allocated[0]);
         Assert.Equal(Money.Euros(amount: 3.33m), allocated[1]);
         Assert.Equal(Money.Euros(amount: 3.33m), allocated[2]);
+    }
+
+    [Fact]
+    public void TestSolvesFoemmelsConundrum()
+    {
+        var amount = Money.Euros(amount: 0.05m);
+        var allocated = amount.Allocate(ratios: [3, 7]);
+        Assert.Equal(Money.Euros(amount: 0.02m), allocated[0]);
+        Assert.Equal(Money.Euros(amount: 0.03m), allocated[1]);
     }
 }
