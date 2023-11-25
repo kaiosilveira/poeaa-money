@@ -241,7 +241,7 @@ public class MoneyTests_Allocation
 
 Note that we're covering Foemmel's conundrum in a specific test. Our goal is to address this problem as part of this implementation.
 
-These test suites are implemented at [PoeAAMoney.Tests/src/Money](./PoeAAMoney.Tests/src/Money), check it out for more details.
+These test suites are implemented at [PoeAAMoney.Tests/src/Money](./PoEAAMoney.Tests/src/Money), check it out for more details.
 
 ## Implementation details
 
