@@ -1,6 +1,4 @@
-using PatternsOfEnterpriseApplicationArchitecture.BasePatterns.Money.Example;
-
-namespace PoEAAMoney.Tests;
+namespace PatternsOfEnterpriseApplicationArchitecture.BasePatterns.Tests;
 
 public class MoneyTests
 {

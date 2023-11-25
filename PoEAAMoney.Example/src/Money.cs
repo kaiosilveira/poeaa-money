@@ -1,4 +1,4 @@
-namespace PatternsOfEnterpriseApplicationArchitecture.BasePatterns.Money.Example;
+namespace PatternsOfEnterpriseApplicationArchitecture.BasePatterns;
 
 public enum Currency
 {
