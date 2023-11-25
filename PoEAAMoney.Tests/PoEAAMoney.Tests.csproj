@@ -22,4 +22,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PoEAAMoney.Example\PoEAAMoney.Example.csproj" />
+  </ItemGroup>
+
 </Project>
