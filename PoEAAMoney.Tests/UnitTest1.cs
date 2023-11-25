@@ -1,67 +1,28 @@
 namespace PatternsOfEnterpriseApplicationArchitecture.BasePatterns.Tests;
 
-public class MoneyTests
+public class MoneyTests_Inequality
 {
     [Fact]
-    public void TestHasAmountAndCurrency()
-    {
-        var money = new Money(amount: 10, currency: Currency.BRL);
-        Assert.Equal(10, money.Amount);
-        Assert.Equal(Currency.BRL, money.Currency);
-    }
-
-    [Fact]
-    public void TestAppliesTheCorrectCentsFactorForBRL()
-    {
-        var money = new Money(amount: 10, currency: Currency.BRL);
-        Assert.Equal(10, money.Amount);
-    }
-
-    [Fact]
-    public void TestCreatesAnUSD()
-    {
-        var money = Money.Dollars(amount: 10);
-        Assert.Equal(Currency.USD, money.Currency);
-    }
-
-    [Fact]
-    public void TestCreatesBRL()
-    {
-        var money = Money.BrasilianReal(amount: 10);
-        Assert.Equal(Currency.BRL, money.Currency);
-    }
-
-    [Fact]
-    public void TestCreatesEUR()
-    {
-        var money = Money.Euros(amount: 10);
-        Assert.Equal(Currency.EUR, money.Currency);
-    }
-
-    [Fact]
-    public void TestIsEqualSameAmountSameCurrency()
-    {
-        var tenEuros1 = Money.Euros(amount: 10);
-        var tenEuros2 = Money.Euros(amount: 10);
-        Assert.Equal(tenEuros1, tenEuros2);
-    }
-
-    [Fact]
-    public void TestIsNotEqualDifferentAmountSameCurrency()
+    public void TestGreaterThanComparisons()
     {
         var tenEuros = Money.Euros(amount: 10);
-        var twentyEuros = Money.Euros(amount: 20);
-        Assert.NotEqual(tenEuros, twentyEuros);
+        var elevenEuros = Money.Euros(amount: 11);
+
+        Assert.True(elevenEuros > tenEuros);
+        Assert.True(tenEuros < elevenEuros);
     }
 
     [Fact]
-    public void TestIsNotEqualSameAmountDifferentCurrency()
+    public void TestCannotCompareDifferentCurrencies()
     {
         var tenEuros = Money.Euros(amount: 10);
         var tenDollars = Money.Dollars(amount: 10);
-        Assert.NotEqual(tenEuros, tenDollars);
+        Assert.Throws<InvalidOperationException>(() => tenEuros > tenDollars);
     }
+}
 
+public class MoneyTests_Arithmetics
+{
     [Fact]
     public void TestAddsUp()
     {
@@ -97,24 +58,6 @@ public class MoneyTests
     }
 
     [Fact]
-    public void TestGreaterThanComparisons()
-    {
-        var tenEuros = Money.Euros(amount: 10);
-        var elevenEuros = Money.Euros(amount: 11);
-
-        Assert.True(elevenEuros > tenEuros);
-        Assert.True(tenEuros < elevenEuros);
-    }
-
-    [Fact]
-    public void TestCannotCompareDifferentCurrencies()
-    {
-        var tenEuros = Money.Euros(amount: 10);
-        var tenDollars = Money.Dollars(amount: 10);
-        Assert.Throws<InvalidOperationException>(() => tenEuros > tenDollars);
-    }
-
-    [Fact]
     public void TestMultiplication()
     {
         var tenEuros = Money.Euros(amount: 10);
@@ -129,7 +72,61 @@ public class MoneyTests
         Assert.Equal(Money.Euros(amount: 2.76m), oneEuro * 2.756m);
         Assert.Equal(Money.Euros(amount: 2.75m), oneEuro * 2.754m);
     }
+}
 
+public class MoneyTests_Equality
+{
+    [Fact]
+    public void TestIsEqualSameAmountSameCurrency()
+    {
+        var tenEuros1 = Money.Euros(amount: 10);
+        var tenEuros2 = Money.Euros(amount: 10);
+        Assert.Equal(tenEuros1, tenEuros2);
+    }
+
+    [Fact]
+    public void TestIsNotEqualDifferentAmountSameCurrency()
+    {
+        var tenEuros = Money.Euros(amount: 10);
+        var twentyEuros = Money.Euros(amount: 20);
+        Assert.NotEqual(tenEuros, twentyEuros);
+    }
+
+    [Fact]
+    public void TestIsNotEqualSameAmountDifferentCurrency()
+    {
+        var tenEuros = Money.Euros(amount: 10);
+        var tenDollars = Money.Dollars(amount: 10);
+        Assert.NotEqual(tenEuros, tenDollars);
+    }
+}
+
+public class MoneyTests_Shortcuts
+{
+    [Fact]
+    public void TestCreatesAnUSD()
+    {
+        var money = Money.Dollars(amount: 10);
+        Assert.Equal(Currency.USD, money.Currency);
+    }
+
+    [Fact]
+    public void TestCreatesBRL()
+    {
+        var money = Money.BrasilianReal(amount: 10);
+        Assert.Equal(Currency.BRL, money.Currency);
+    }
+
+    [Fact]
+    public void TestCreatesEUR()
+    {
+        var money = Money.Euros(amount: 10);
+        Assert.Equal(Currency.EUR, money.Currency);
+    }
+}
+
+public class MoneyTests_Allocation
+{
     [Fact]
     public void TestAllocation()
     {
@@ -147,5 +144,23 @@ public class MoneyTests
         var allocated = amount.Allocate(ratios: [3, 7]);
         Assert.Equal(Money.Euros(amount: 0.02m), allocated[0]);
         Assert.Equal(Money.Euros(amount: 0.03m), allocated[1]);
+    }
+}
+
+public class MoneyTests_BasicInfo
+{
+    [Fact]
+    public void TestHasAmountAndCurrency()
+    {
+        var money = new Money(amount: 10, currency: Currency.BRL);
+        Assert.Equal(10, money.Amount);
+        Assert.Equal(Currency.BRL, money.Currency);
+    }
+
+    [Fact]
+    public void TestAppliesTheCorrectCentsFactorForBRL()
+    {
+        var money = new Money(amount: 10, currency: Currency.BRL);
+        Assert.Equal(10, money.Amount);
     }
 }
